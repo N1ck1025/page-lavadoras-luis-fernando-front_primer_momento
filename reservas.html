@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ver Reservas Guardadas - Lavadoras Medellín</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      background-color: #0D1117;
+      color: #E6EDF3;
+      font-family: 'DM Sans', sans-serif;
+    }
+  </style>
+</head>
+<body>
+
+<div class="max-w-6xl mx-auto px-4 py-12">
+  <div class="mb-8">
+    <h1 class="text-4xl font-bold text-white mb-2">Reservas Guardadas</h1>
+    <p class="text-white/60">Todas las reservas realizadas en el formulario</p>
+  </div>
+
+  <div id="reservas-container" class="space-y-4">
+    <!-- Se llenará con JavaScript -->
+  </div>
+
+  <div id="no-reservas" class="text-center py-12">
+    <p class="text-white/50 text-lg">No hay reservas guardadas aún</p>
+    <a href="index.html" class="inline-block mt-4 bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-500 transition-colors">
+      Ir al formulario
+    </a>
+  </div>
+
+  <div class="mt-8 pt-8 border-t border-white/10">
+    <button onclick="limpiarReservas()" class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-500 transition-colors text-sm">
+      Limpiar todas las reservas
+    </button>
+    <p class="text-white/40 text-sm mt-3">Las reservas se guardan en localStorage del navegador</p>
+  </div>
+</div>
+
+<script>
+// Función para cargar y mostrar reservas
+function cargarReservas() {
+  const reservas = JSON.parse(localStorage.getItem('reservasLavadoras')) || [];
+  const container = document.getElementById('reservas-container');
+  const noReservas = document.getElementById('no-reservas');
+
+  if (reservas.length === 0) {
+    noReservas.style.display = 'block';
+    container.innerHTML = '';
+    return;
+  }
+
+  noReservas.style.display = 'none';
+  container.innerHTML = reservas.map((reserva, index) => `
+    <div class="bg-gray-900 border border-white/10 rounded-lg p-6 hover:border-green-500/50 transition-colors">
+      <div class="flex justify-between items-start mb-4">
+        <h3 class="text-xl font-bold text-white">Reserva #${index + 1}</h3>
+        <button onclick="eliminarReserva(${reserva.id})" class="text-red-400 hover:text-red-300 text-sm px-3 py-1 bg-red-500/10 rounded hover:bg-red-500/20 transition-colors">
+          Eliminar
+        </button>
+      </div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <p class="text-white/50 text-sm">Nombre</p>
+          <p class="text-white font-medium">${reserva.nombre}</p>
+        </div>
+        <div>
+          <p class="text-white/50 text-sm">Teléfono</p>
+          <p class="text-white font-medium">${reserva.telefono}</p>
+        </div>
+        <div>
+          <p class="text-white/50 text-sm">Dirección</p>
+          <p class="text-white font-medium">${reserva.direccion}</p>
+        </div>
+        <div>
+          <p class="text-white/50 text-sm">Servicio</p>
+          <p class="text-white font-medium">${reserva.servicio}</p>
+        </div>
+        <div>
+          <p class="text-white/50 text-sm">Valor</p>
+          <p class="text-green-400 font-bold text-lg">${reserva.precio}</p>
+        </div>
+        <div>
+          <p class="text-white/50 text-sm">Fecha de Servicio</p>
+          <p class="text-white font-medium">${reserva.fecha}</p>
+        </div>
+        <div>
+          <p class="text-white/50 text-sm">Jornada</p>
+          <p class="text-white font-medium">${reserva.jornada}</p>
+        </div>
+        <div>
+          <p class="text-white/50 text-sm">Fecha de Registro</p>
+          <p class="text-white/60 text-sm">${reserva.fechaRegistro}</p>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+// Función para eliminar una reserva
+function eliminarReserva(id) {
+  if (confirm('¿Estás seguro de que deseas eliminar esta reserva?')) {
+    let reservas = JSON.parse(localStorage.getItem('reservasLavadoras')) || [];
+    reservas = reservas.filter(r => r.id !== id);
+    localStorage.setItem('reservasLavadoras', JSON.stringify(reservas));
+    cargarReservas();
+  }
+}
+
+// Función para limpiar todas las reservas
+function limpiarReservas() {
+  if (confirm('¿Estás seguro de que deseas eliminar TODAS las reservas? Esta acción no se puede deshacer.')) {
+    localStorage.removeItem('reservasLavadoras');
+    cargarReservas();
+    alert('Todas las reservas han sido eliminadas');
+  }
+}
+
+// Cargar reservas al iniciar
+document.addEventListener('DOMContentLoaded', cargarReservas);
+</script>
+
+</body>
+</html>
